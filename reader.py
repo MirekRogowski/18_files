@@ -10,8 +10,8 @@ class AbstractReader:
 
     ALLOWED_EXTENSIONS = ("json", "csv", "pickle")
 
-    def __init__(self, file_path_dst):
-        self.file_path_dst = file_path_dst
+    def __init__(self, file_path_src):
+        self.file_path_src = file_path_src
         self.file_name_read = ""
         self.file_path_read = ""
         self.file_data = []
@@ -26,22 +26,37 @@ class AbstractReader:
             return False
         return True
 
-    def list_directory(self):
+    def check_directory(self):
+        print("def list_directory - before if", self.file_path_read)
         if os.path.isdir(self.file_path_read):
+
+            print("def list_directory - inside if", self.file_path_read)
             for line in os.listdir(self.file_path_read):
                 print(f"{line:55} file") if os.path.isfile(line) else print(f"{line:55} <DIR>")
         else:
-            print(f"Brak katalogu {self.filepath}")
+            # print(f"Brak katalogu {self.file_path_read}")
+            print(f"Brak katalogu {self.file_path_read}. Nie można odczytać pliku: {self.file_name_read}")
+
+    # def check_directory(self):
+    #     # print("self.file_path_src",self.file_path_src)
+    #     # print(os.path.isdir(self.file_path_src))
+    #     try:
+    #         print("try - def check_directory")
+    #         self.list_directory()
+    #         print("try - def check_directory")
+    #     except:
+    #         print("except - def check_directory")
+    #         print(f"Brak katalogu {self.file_path_read}. Nie można odczytać pliku: {self.file_name_read}")
 
     def check_file(self):
-        self.read_file() if os.path.isfile(self.filepath+os.sep+self.filename) else self.list_directory()
+        self.read_file() if os.path.isfile(self.file_path_src) else self.list_directory()
 
     def read_file_path(self):
-        self.file_name_read = pathlib.Path(self.file_path_dst).name
-        if not os.path.dirname(self.file_path_dst):
+        self.file_name_read = pathlib.Path(self.file_path_src).name
+        if not os.path.dirname(self.file_path_src):
             self.file_path_read = os.getcwd()
         else:
-            self.file_path_read = os.path.dirname(self.file_path_dst)
+            self.file_path_read = os.path.dirname(self.file_path_src)
 
     def new_values(self, new_value):
         for lista in new_value:
@@ -51,11 +66,18 @@ class AbstractReader:
             value = item[2].strip()
             self.file_data[y][x] = value
 
-
+    def read_data(self):
+        self.read_file_path()
+        try:
+            print("try  -  def read_data")
+            self.read_file()
+        except:
+            print("except -  def read_data" )
+            self.check_directory()
 
     def print_data(self):
-        print(self.file_name_read)
-        print(self.file_path_read)
+        print("file_name_read", self.file_name_read)
+        print("file_path_read",self.file_path_read)
         print(self.file_data, type(self.file_data))
         # print(self.file_type)
         # print(self.validate)
@@ -64,21 +86,21 @@ class AbstractReader:
 class FileCsvReader(AbstractReader):
     def read_file(self):
         # print(os.path.join(self.filepath, self.filename))
-        with open(os.path.join(self.filepath, self.filename), newline="\n") as f:
+        with open(self.file_path_src, newline="\n") as f:
             for line in csv.reader(f):
                 self.file_data.append(line)
 
 
 class FileJsonReader(AbstractReader):
     def read_file(self):
-        with open(self.filename) as f:
+        with open(self.file_path_src) as f:
             temp_data = json.load(f)
             self.file_data = json.loads(temp_data)
 
 
 class FilePickleReader(AbstractReader):
     def read_file(self):
-        with open(self.filename, "rb") as f:
+        with open(self.file_path_src, "rb") as f:
             self.file_data = pickle.load(f)
 
 
@@ -105,6 +127,7 @@ class AbstractWriter:
 
     def print_data(self):
         print(self.file_path_dst)
+        print(self.file_path_src)
         print(self.file_date)
         print(self.file_name_writer)
         print(self.file_path_writer)
@@ -193,7 +216,7 @@ else:
 
 fr = get_class_reader(sys.argv[1])
 # print(fr.filename, fr.filepath)
-fr.read_file_path()
+fr.read_data()
 # fr.check_file()
 fr.print_data()
 
