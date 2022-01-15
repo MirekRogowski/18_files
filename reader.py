@@ -32,9 +32,15 @@ class AbstractReader:
 
     def list_directory(self):
         # print(f"Brak pliku: {self.filename} w katalogu: {self.filepath}")
-        for line in os.listdir(self.filepath):
-            print(f"{line:55} file") if os.path.isfile(line) else print(f"{line:55} <DIR>")
-        return exit()
+        # pathlib.Path(sys.argv[1]).is_absolute())
+        if os.path.isdir(self.filepath):
+            for line in os.listdir(self.filepath):
+                print(f"{line:55} file") if os.path.isfile(line) else print(f"{line:55} <DIR>")
+        else:
+            print(f"Brak katalogu {self.filepath}")
+
+    def check_file(self):
+        self.read_file() if os.path.isfile(self.filepath+os.sep+self.filename) else self.list_directory()
 
     def new_values(self, new_value):
         for lista in new_value:
@@ -43,6 +49,8 @@ class AbstractReader:
             x = int(item[1].strip())
             value = item[2].strip()
             self.file_data[y][x] = value
+
+
 
     def print_data(self):
         # print(self.filename)
@@ -54,13 +62,9 @@ class AbstractReader:
 
 
 class FileCsvReader(AbstractReader):
-    def check_file(self):
-        self.read_file() if not os.path.join(self.filepath, self.filename) else self.list_directory()
-
     def read_file(self):
-        print(os.path.join(self.filepath, self.filename))
+        # print(os.path.join(self.filepath, self.filename))
         with open(os.path.join(self.filepath, self.filename), newline="\n") as f:
-        # with open(self.filename, newline="\n") as f:
             for line in csv.reader(f):
                 self.file_data.append(line)
 
@@ -153,7 +157,7 @@ file_name_writer = pathlib.Path(sys.argv[2]).name
 file_path_writer = os.path.dirname(sys.argv[2])
 
 fr = get_class_reader(file_name_reader, file_path_reader)
-print(fr.filename, fr.filepath)
+# print(fr.filename, fr.filepath)
 fr.check_file()
 fr.print_data()
 
