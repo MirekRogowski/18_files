@@ -55,11 +55,10 @@ class AbstractReader:
 
 class FileCsvReader(AbstractReader):
     def check_file(self):
-        self.read_file() if os.path.exists(self.filename) else self.list_directory()
-
-        # open_file(os.path.join(directory, file)) if os.path.isfile(file) else list_directory(file, directory)
+        self.read_file() if not os.path.join(self.filepath, self.filename) else self.list_directory()
 
     def read_file(self):
+        print(os.path.join(self.filepath, self.filename))
         with open(os.path.join(self.filepath, self.filename), newline="\n") as f:
         # with open(self.filename, newline="\n") as f:
             for line in csv.reader(f):
