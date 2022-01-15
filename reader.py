@@ -82,10 +82,23 @@ class FilePickleReader(AbstractReader):
             self.file_data = pickle.load(f)
 
 
-class FileCsvWriter:
-    def __init__(self, filename, file_date):
-        self.filename = filename
+class AbstractWriter:
+    pass
+
+
+class FileCsvWriter(AbstractWriter):
+    def __init__(self, file_path_dst, file_date):
+        self.path_path_dst = file_path_dst
         self.file_date = file_date
+        self.file_name_writer = file_name_writer
+        self.file_path_writer = file_path_writer
+
+    def check_file_dst(self):
+        self.file_name_writer = pathlib.Path(self.path_path_dst).name
+        if not os.path.dirname(self.path_path_dst):
+            self.file_path_writer = os.getcwd()
+        else:
+            self.file_path_writer = os.path.dirname(self.path_path_dst)
 
     def write_file(self):
         with open(self.filename, "w", newline="") as f:
@@ -152,9 +165,18 @@ def print_test():
 
 
 file_name_reader = pathlib.Path(sys.argv[1]).name
-file_path_reader = os.path.dirname(sys.argv[1])
+if not os.path.dirname(sys.argv[1]):
+    file_path_reader = os.getcwd()
+else:
+    file_path_reader = os.path.dirname(sys.argv[1])
+
 file_name_writer = pathlib.Path(sys.argv[2]).name
-file_path_writer = os.path.dirname(sys.argv[2])
+if not os.path.dirname(sys.argv[2]):
+    file_path_writer = os.getcwd()
+else:
+    file_path_writer = os.path.dirname(sys.argv[2])
+
+
 
 fr = get_class_reader(file_name_reader, file_path_reader)
 # print(fr.filename, fr.filepath)
@@ -166,5 +188,8 @@ fr.print_data()
 # print(data, type(data))
 # print(data1, type(data1) )
 
-fw = get_class_writer(file_name_writer, fr.file_data)
-fw.write_file()
+fw = get_class_writer(sys.argv[2], fr.file_data)
+print(fw.file_path_writer)
+print(file_name_writer)
+
+# fw.write_file()
