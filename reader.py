@@ -27,26 +27,11 @@ class AbstractReader:
         return True
 
     def check_directory(self):
-        print("def list_directory - before if", self.file_path_read)
         if os.path.isdir(self.file_path_read):
-
-            print("def list_directory - inside if", self.file_path_read)
             for line in os.listdir(self.file_path_read):
                 print(f"{line:55} file") if os.path.isfile(line) else print(f"{line:55} <DIR>")
         else:
-            # print(f"Brak katalogu {self.file_path_read}")
             print(f"Brak katalogu {self.file_path_read}. Nie można odczytać pliku: {self.file_name_read}")
-
-    # def check_directory(self):
-    #     # print("self.file_path_src",self.file_path_src)
-    #     # print(os.path.isdir(self.file_path_src))
-    #     try:
-    #         print("try - def check_directory")
-    #         self.list_directory()
-    #         print("try - def check_directory")
-    #     except:
-    #         print("except - def check_directory")
-    #         print(f"Brak katalogu {self.file_path_read}. Nie można odczytać pliku: {self.file_name_read}")
 
     def check_file(self):
         self.read_file() if os.path.isfile(self.file_path_src) else self.list_directory()
@@ -59,8 +44,8 @@ class AbstractReader:
             self.file_path_read = os.path.dirname(self.file_path_src)
 
     def new_values(self, new_value):
-        for lista in new_value:
-            item = lista.split(",")
+        for row in new_value:
+            item = row.split(",")
             y = int(item[0].strip())
             x = int(item[1].strip())
             value = item[2].strip()
@@ -69,10 +54,8 @@ class AbstractReader:
     def read_data(self):
         self.read_file_path()
         try:
-            print("try  -  def read_data")
             self.read_file()
         except:
-            print("except -  def read_data" )
             self.check_directory()
 
     def print_data(self):
@@ -118,7 +101,7 @@ class AbstractWriter:
         else:
             self.file_path_writer = os.path.dirname(self.file_path_dst)
 
-    def write_file_path(self):
+    def write_data(self):
         self.read_file_path()
         try:
             self.write_file()
@@ -127,7 +110,6 @@ class AbstractWriter:
 
     def print_data(self):
         print(self.file_path_dst)
-        print(self.file_path_src)
         print(self.file_date)
         print(self.file_name_writer)
         print(self.file_path_writer)
@@ -144,13 +126,13 @@ class FileCsvWriter(AbstractWriter):
 class FileJsonWriter(AbstractWriter):
     def write_file(self):
         json_string = json.dumps(self.file_date) #read from object open_csv
-        with open(self.file_path_writer, "w") as f:
+        with open(os.path.join(self.file_path_writer, self.file_name_writer), "w") as f:
             json.dump(json_string, f)
 
 
 class FilePickleWriter(AbstractWriter):
     def write_file(self):
-        with open(self.file_path_writer, "wb") as f:
+        with open(os.path.join(self.file_path_writer, self.file_name_writer), "wb") as f:
             pickle.dump(self.file_date, f)
 
 
@@ -206,24 +188,16 @@ if not os.path.dirname(sys.argv[1]):
 else:
     file_path_reader = os.path.dirname(sys.argv[1])
 
-# file_name_writer = pathlib.Path(sys.argv[2]).name
-# if not os.path.dirname(sys.argv[2]):
-#     file_path_writer = os.getcwd()
-# else:
-#     file_path_writer = os.path.dirname(sys.argv[2])
+def main():
+    fr = get_class_reader(sys.argv[1])
+    fr.read_data()
+    fr.print_data()
+    if fr.file_data:
+        fr.new_values(sys.argv[3:])
+        fw = get_class_writer(sys.argv[2], fr.file_data)
+        fw.write_data()
+    else:
+        print("Brak danych")
 
 
-
-fr = get_class_reader(sys.argv[1])
-# print(fr.filename, fr.filepath)
-fr.read_data()
-# fr.check_file()
-fr.print_data()
-
-# data = json.loads(fr.file_data)
-# data1 = list(data)
-# print(data, type(data))
-# print(data1, type(data1) )
-
-# fw = get_class_writer(sys.argv[2], fr.file_data)
-# fw.write_file_path()
+main()
