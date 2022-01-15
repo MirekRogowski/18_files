@@ -19,7 +19,7 @@ class AbstractReader:
         self.validate = self.validate()
 
     def check_filetype(self):
-        return pathlib.Path(self.filename).suffix[1:]
+        return pathlib.Path(self.file_name_read).suffix[1:]
 
     def validate(self):
         if self.file_type not in AbstractReader.ALLOWED_EXTENSIONS:
@@ -27,8 +27,8 @@ class AbstractReader:
         return True
 
     def list_directory(self):
-        if os.path.isdir(self.):
-            for line in os.listdir(self.filepath):
+        if os.path.isdir(self.file_path_read):
+            for line in os.listdir(self.file_path_read):
                 print(f"{line:55} file") if os.path.isfile(line) else print(f"{line:55} <DIR>")
         else:
             print(f"Brak katalogu {self.filepath}")
@@ -131,24 +131,24 @@ class FilePickleWriter(AbstractWriter):
             pickle.dump(self.file_date, f)
 
 
-def get_class_reader(file_name, file_path):
-    suffix = pathlib.Path(file_name).suffix[1:]
+def get_class_reader(file_path_src):
+    suffix = pathlib.Path(file_path_src).suffix[1:]
     if suffix == "csv":
-        return FileCsvReader(file_name, file_path)
+        return FileCsvReader(file_path_src)
     if suffix == "json":
-        return FileJsonReader(file_name, file_path)
+        return FileJsonReader(file_path_src)
     if suffix == "pickle":
-        return FilePickleReader(file_name, file_path)
+        return FilePickleReader(file_path_src)
 
 
-def get_class_writer(file_name, file_date):
-    suffix = pathlib.Path(file_name).suffix[1:]
+def get_class_writer(file_path_dst, file_date):
+    suffix = pathlib.Path(file_path_dst).suffix[1:]
     if suffix == "csv":
-        return FileCsvWriter(file_name, file_date)
+        return FileCsvWriter(file_path_dst, file_date)
     if suffix == "json":
-        return FileJsonWriter(file_name, file_date)
+        return FileJsonWriter(file_path_dst, file_date)
     if suffix == "pickle":
-        return FilePickleWriter(file_name, file_date)
+        return FilePickleWriter(file_path_dst, file_date)
 
 
 def read_file_path(file_path_dst):
@@ -191,10 +191,10 @@ else:
 
 
 
-fr = get_class_reader(file_name_reader, file_path_reader)
+fr = get_class_reader(sys.argv[1])
 # print(fr.filename, fr.filepath)
-fw.read_file_path()
-fr.check_file()
+fr.read_file_path()
+# fr.check_file()
 fr.print_data()
 
 # data = json.loads(fr.file_data)
@@ -202,5 +202,5 @@ fr.print_data()
 # print(data, type(data))
 # print(data1, type(data1) )
 
-fw = get_class_writer(sys.argv[2], fr.file_data)
-fw.write_file_path()
+# fw = get_class_writer(sys.argv[2], fr.file_data)
+# fw.write_file_path()
