@@ -58,13 +58,6 @@ class AbstractReader:
         except:
             self.check_directory()
 
-    def print_data(self):
-        print("file_name_read", self.file_name_read)
-        print("file_path_read",self.file_path_read)
-        print(self.file_data, type(self.file_data))
-        # print(self.file_type)
-        # print(self.validate)
-
 
 class FileCsvReader(AbstractReader):
     def read_file(self):
@@ -107,12 +100,6 @@ class AbstractWriter:
             self.write_file()
         except:
             print(f"Brak katalogu {self.file_path_writer} by zapisać plik: {self.file_name_writer}")
-
-    def print_data(self):
-        print(self.file_path_dst)
-        print(self.file_date)
-        print(self.file_name_writer)
-        print(self.file_path_writer)
 
 
 class FileCsvWriter(AbstractWriter):
@@ -165,29 +152,6 @@ def read_file_path(file_path_dst):
     return file_path_writer, file_name_writer
 
 
-def print_test():
-    print(sys.argv[1])
-    print(sys.argv[2])
-    print("_" * 50)
-    print(pathlib.Path(sys.argv[1]).name)
-    print("_" * 50)
-    print(pathlib.Path(sys.argv[1]).is_absolute())
-    print("_" * 50)
-    print(pathlib.Path(sys.argv[1]).joinpath())
-    print("_" * 50)
-    print(pathlib.Path(sys.argv[1]))
-    print("_" * 50)
-    print(sys.argv[1].split(os.sep)[-1])
-    print("_" * 50)
-    print(os.path.dirname(sys.argv[1]))
-
-
-file_name_reader = pathlib.Path(sys.argv[1]).name
-if not os.path.dirname(sys.argv[1]):
-    file_path_reader = os.getcwd()
-else:
-    file_path_reader = os.path.dirname(sys.argv[1])
-
 def main():
     fr = get_class_reader(sys.argv[1])
     fr.read_data()
@@ -198,6 +162,5 @@ def main():
         fw.write_data()
     else:
         print("Brak danych")
-
 
 main()
