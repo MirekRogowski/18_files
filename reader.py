@@ -57,10 +57,7 @@ class AbstractReader:
         self.read_file_path()
         try:
             self.read_file()
-            try:
-                self.new_values()
-            except:
-                print("Brak danych do zmian")
+            self.new_values()
         except:
             self.check_directory()
 
@@ -160,11 +157,8 @@ def read_file_path(file_path_dst):
 def main():
     fr = get_class_reader(sys.argv[1], sys.argv[3:])
     fr.read_data()
-    if fr.file_data or fr.new_value:
-        fw = get_class_writer(sys.argv[2], fr.file_data)
-        fw.write_data()
-    else:
-        print("Brak danych")
-
+    fw = get_class_writer(sys.argv[2], fr.file_data)
+    fw.write_data()
+    
 
 main()
