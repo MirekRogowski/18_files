@@ -7,25 +7,12 @@ import pathlib
 
 
 class AbstractReader:
-
-    ALLOWED_EXTENSIONS = ("json", "csv", "pickle")
-
     def __init__(self, file_path_src, new_values):
         self.file_path_src = file_path_src
         self.file_name_read = ""
         self.file_path_read = ""
         self.new_value = new_values
         self.file_data = []
-        self.file_type = self.check_filetype()
-        self.validate = self.validate()
-
-    def check_filetype(self):
-        return pathlib.Path(self.file_name_read).suffix[1:]
-
-    def validate(self):
-        if self.file_type not in AbstractReader.ALLOWED_EXTENSIONS:
-            return False
-        return True
 
     def check_directory(self):
         if os.path.isdir(self.file_path_read):
