@@ -145,15 +145,6 @@ def get_class_writer(file_path_dst, file_date):
         return FilePickleWriter(file_path_dst, file_date)
 
 
-def read_file_path(file_path_dst):
-    file_name_writer = pathlib.Path(file_path_dst).name
-    if not os.path.dirname(file_path_dst):
-        file_path_writer = os.getcwd()
-    else:
-        file_path_writer = os.path.dirname(file_path_dst)
-    return file_path_writer, file_name_writer
-
-
 def main():
     fr = get_class_reader(sys.argv[1], sys.argv[3:])
     fr.read_data()
