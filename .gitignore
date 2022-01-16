@@ -1,0 +1,8 @@
+
+.gitattributes
+* text=auto
+*.csv
+*.json
+*.pickle
+test*
+.gitattributes
